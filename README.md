@@ -20,6 +20,20 @@ Contacts.getAll((err, contacts) => {
 })
 ```
 
+`getContactMatchingString` is meant to alleviate the amount of time it takes to get all contacts, by filtering on the native side based on a string.
+
+```js
+var Contacts = require('react-native-contacts')
+
+Contacts.getContactsMatchingString("filter", (err, contacts) => {
+  if(err === 'denied'){
+    // x.x
+  } else {
+    // Contains only contacts matching "filter"
+    console.log(contacts)
+  }
+})
+```
 ## Installation
 run `npm install react-native-contacts`
 
