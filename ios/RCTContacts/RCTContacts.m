@@ -53,20 +53,28 @@ RCT_EXPORT_METHOD(getContactsMatchingString:(NSString *)string callback:(RCTResp
                        callback:(RCTResponseSenderBlock)callback
 {
     NSMutableArray *contacts = [[NSMutableArray alloc] init];
-    NSError *error = nil;
-    contacts = [contactStore unifiedContactsMatchingPredicate:[CNContact predicateForContactsMatchingName:searchString]
-                                                  keysToFetch:@[
-                                                                CNContactEmailAddressesKey,
-                                                                CNContactPhoneNumbersKey,
-                                                                CNContactFamilyNameKey,
-                                                                CNContactGivenNameKey,
-                                                                CNContactMiddleNameKey,
-                                                                CNContactPostalAddressesKey,
-                                                                CNContactOrganizationNameKey,
-                                                                CNContactJobTitleKey,
-                                                                CNContactImageDataAvailableKey
-                                                                ]
-                                             error:&error];
+    NSError *contactError = nil;
+    [contactStore containersMatchingPredicate:[CNContact predicateForContactsMatchingName:searchString] error:&contactError];
+    
+    NSMutableArray *keysToFetch = [[NSMutableArray alloc]init];
+    [keysToFetch addObjectsFromArray:@[
+                                       CNContactEmailAddressesKey,
+                                       CNContactPhoneNumbersKey,
+                                       CNContactFamilyNameKey,
+                                       CNContactGivenNameKey,
+                                       CNContactMiddleNameKey,
+                                       CNContactPostalAddressesKey,
+                                       CNContactOrganizationNameKey,
+                                       CNContactJobTitleKey,
+                                       CNContactImageDataAvailableKey
+                                       ]];
+    
+    CNContactFetchRequest * request = [[CNContactFetchRequest alloc]initWithKeysToFetch:keysToFetch];
+    BOOL success = [contactStore enumerateContactsWithFetchRequest:request error:&contactError usingBlock:^(CNContact * __nonnull contact, BOOL * __nonnull stop){
+        NSDictionary *contactDict = [self contactToDictionary: contact withThumbnails:withThumbnails];
+        
+        [contacts addObject:contactDict];
+    }];
     
     callback(@[[NSNull null], contacts]);
 }
