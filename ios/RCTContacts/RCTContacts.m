@@ -55,12 +55,17 @@ RCT_EXPORT_METHOD(getContactsMatchingString:(NSString *)string callback:(RCTResp
     NSMutableArray *contacts = [[NSMutableArray alloc] init];
     NSError *error = nil;
     contacts = [contactStore unifiedContactsMatchingPredicate:[CNContact predicateForContactsMatchingName:searchString]
-                                       keysToFetch:@[
-                                                     CNContactGivenNameKey,
-                                                     CNContactFamilyNameKey,
-                                                     CNContactEmailAddressesKey,
-                                                     CNContactMiddleNameKey
-                                                     ]
+                                                  keysToFetch:@[
+                                                                CNContactEmailAddressesKey,
+                                                                CNContactPhoneNumbersKey,
+                                                                CNContactFamilyNameKey,
+                                                                CNContactGivenNameKey,
+                                                                CNContactMiddleNameKey,
+                                                                CNContactPostalAddressesKey,
+                                                                CNContactOrganizationNameKey,
+                                                                CNContactJobTitleKey,
+                                                                CNContactImageDataAvailableKey
+                                                                ]
                                              error:&error];
     
     callback(@[[NSNull null], contacts]);
